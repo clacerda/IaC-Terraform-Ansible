@@ -10,3 +10,7 @@
 *.tfstate.*
 
 *.pem
+
+*.pub
+IaC-PROD
+IaC-DEV

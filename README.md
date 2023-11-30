@@ -42,3 +42,43 @@ Para a execução do Ansible,
 ```bash
 ansible-playbook playbook.yml -u ubuntu --private-key iac-alura.pem -i hosts.yml
 ```
+
+
+-------------------------------------------------------------------------------------------------------
+
+# Nova Etapa: Criar ambientes distintos
+
+Criando SSH - Este comando vai criar 2 chaves, a pública (PUB) e a privada.
+```bash
+ssh-keygen
+```
+
+## Para instanciar a chave SSH:
+
+```bash
+resource "aws_key_pair" "chaveSSH" {
+  key_name = “Nome da chave”
+  public_key = file("suachave.pub”)
+}
+```
+
+## O terraform aceita variáveis
+
+```bash
+variable "instancia" {
+  type = string
+}
+```
+
+
+## O Terraform permite a segregação através de módulos
+Por exemplo, na pasta Dev incluo as variáveis criadas e com isto posso definir de forma apartada o que eu preciso para este recurso.
+
+```bash
+module "aws-dev" {
+  source = "../../infra"
+  instancia = "t2.micro"
+  region_aws = "us-east-1"
+  chave = "IaC-DEV"
+}
+```
