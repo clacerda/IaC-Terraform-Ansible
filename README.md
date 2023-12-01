@@ -82,3 +82,16 @@ module "aws-dev" {
   chave = "IaC-DEV"
 }
 ```
+
+## Configurando saídas
+O terraform permite que alguns parâmetros seja configurados para gerar uma saída
+```bash
+output "IP" {
+  value = module.aws-dev.IP_publico
+}
+```
+
+Para visualizar, basta executar o comando:
+```bash
+terraform output
+```

@@ -9,3 +9,7 @@ variable "chave" {
 variable "instancia" {
   type = string
 }
+
+variable "ami_aws" {
+  type = string
+}
