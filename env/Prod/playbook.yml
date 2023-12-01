@@ -11,13 +11,13 @@
     - name: Git Clone
       ansible.builtin.git: 
         repo: https://github.com/alura-cursos/clientes-leo-api
-
+        dest: /home/ubuntu/tcc
+        version: master
+        force: yes
     - name: Instalando dependencias com pip (Django e Django rest)
       pip: 
         virtualenv: /home/ubuntu/tcc/venv
-        name:
-          - django
-          - djangorestframework
+        requirements: /home/ubuntu/tcc/requirements.txt
     
     - name: Alterando o host do settings
       lineinfile:
@@ -25,4 +25,5 @@
         regexp: 'ALLOWED_HOSTS'
         line: 'ALLOWED_HOSTS = ["*"]'
         backrefs: yes
+
 

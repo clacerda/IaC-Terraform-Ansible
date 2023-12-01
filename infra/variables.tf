@@ -13,3 +13,8 @@ variable "instancia" {
 variable "ami_aws" {
   type = string
 }
+
+variable "security_group_name" {
+  description = "Nome do Grupo de Segurança"
+  default     = "acesso_geral"
+}
