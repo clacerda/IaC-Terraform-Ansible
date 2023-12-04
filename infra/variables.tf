@@ -18,3 +18,17 @@ variable "security_group_name" {
   description = "Nome do Grupo de Segurança"
   default     = "acesso_geral"
 }
+
+variable "minimo" {
+  type = number
+}
+
+variable "maximo" {
+  type = number
+}
+
+variable "nomeGrupo" {
+  type = string
+}
+
+

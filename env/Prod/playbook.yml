@@ -26,4 +26,13 @@
         line: 'ALLOWED_HOSTS = ["*"]'
         backrefs: yes
 
+    - name: Configurando o banco de dados
+      shell: '. /home/ubuntu/tcc/venv/bin/activate; python /home/ubuntu/tcc/manage.py migrate'
+
+    - name: Carga de dados
+      shell: '. /home/ubuntu/tcc/venv/bin/activate; python /home/ubuntu/tcc/manage.py loaddata clientes.json'
+
+    - name: Iniciando o Servidor
+      shell: '. /home/ubuntu/tcc/venv/bin/activate; nohup python /home/ubuntu/tcc/manage.py runserver 0.0.0.0:8000 &'
+
 

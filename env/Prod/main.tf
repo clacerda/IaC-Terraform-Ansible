@@ -5,8 +5,12 @@ module "aws-prod" {
   chave = "IaC-PROD"
   ami_aws = "ami-0fc5d935ebf8bc3bc"
   security_group_name = "acesso_Prod"
+
+  minimo = 1
+  maximo = 10
+  nomeGrupo = "Prod"
 }
 
-output "IP_Prod" {
-  value = module.aws-prod.IP_publico
-}
+# output "IP_Prod" {
+#   value = module.aws-prod.IP_publico
+# }
