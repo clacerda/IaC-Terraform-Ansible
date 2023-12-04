@@ -22,17 +22,69 @@ resource "aws_launch_template" "maquina" {
   tags = {
     Name = "Terraform - Ansible - Python"
   }
+
+  user_data = var.producao ? filebase64("ansible.sh") : ""
+
   # security_group_name = [var.security_group_name]
 }
 
 resource "aws_autoscaling_group" "grupo"{
-  availability_zones = ["${var.region_aws}a"]
+  availability_zones = ["${var.region_aws}a", "${var.region_aws}b"  ]
   name = var.nomeGrupo
   max_size = var.maximo
   min_size = var.minimo
   launch_template {
     id = aws_launch_template.maquina.id
     version = "$Latest"
+  }
+
+  target_group_arns = [ aws_lb_target_group.alvoLoadBalancer.arn ]
+
+}
+
+resource "aws_default_subnet" "subnet_1" {
+  availability_zone = "${var.region_aws}a"
+}
+
+resource "aws_default_subnet" "subnet_2" {
+  availability_zone = "${var.region_aws}b"
+}
+
+resource "aws_lb" "loadBalancer" {
+  internal = false
+  subnets = [aws_default_subnet.subnet_1.id, aws_default_subnet.subnet_2.id]
+}
+
+resource "aws_lb_target_group" "alvoLoadBalancer" {
+  name = "maquinasAlvo"
+  port = "8000"
+  protocol = "HTTP"
+  vpc_id = aws_default_vpc.default.id
+}
+
+resource "aws_default_vpc" "default" {
+
+}
+
+resource "aws_lb_listener" "entradaLoadBalancer" {
+  load_balancer_arn = aws_lb.loadBalancer.arn
+  port = "8000"
+  protocol = "HTTP"
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.alvoLoadBalancer.arn
+  }
+}
+
+resource "aws_autoscaling_policy" "escala-Producao" {
+  name = "terraform-escala"
+  autoscaling_group_name = var.nomeGrupo
+  policy_type = "TargetTrackingScaling"
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+    target_value = 50.0
   }
 }
 
