@@ -42,6 +42,29 @@ resource "aws_autoscaling_group" "grupo"{
 
 }
 
+
+resource "aws_autoscaling_schedule" "ligarMaquina" {
+  scheduled_action_name  = "ligarMaquina"
+  min_size               = 0
+  max_size               = 1
+  desired_capacity       = 1
+  start_time             = timeadd(timestamp(), "12m")
+  recurrence             = "0 7 * * MON-FRI"
+  # end_time               = "2016-12-12T06:00:00Z"
+  autoscaling_group_name = aws_autoscaling_group.grupo.name
+}
+
+resource "aws_autoscaling_schedule" "desligarMaquina" {
+  scheduled_action_name  = "desligarMaquina"
+  min_size               = 0
+  max_size               = 1
+  desired_capacity       = 0
+  start_time             =  timeadd(timestamp(), "10m")
+  recurrence             = "0 18 * * MON-FRI"
+  # end_time               = "2016-12-12T06:00:00Z"
+  autoscaling_group_name = aws_autoscaling_group.grupo.name
+}
+
 resource "aws_default_subnet" "subnet_1" {
   availability_zone = "${var.region_aws}a"
 }
