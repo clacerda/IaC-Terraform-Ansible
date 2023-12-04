@@ -38,7 +38,7 @@ resource "aws_autoscaling_group" "grupo"{
     version = "$Latest"
   }
 
-  target_group_arns = [ aws_lb_target_group.alvoLoadBalancer.arn ]
+  target_group_arns = var.producao ? [ aws_lb_target_group.alvoLoadBalancer[0].arn ] : []
 
 }
 
@@ -53,6 +53,7 @@ resource "aws_default_subnet" "subnet_2" {
 resource "aws_lb" "loadBalancer" {
   internal = false
   subnets = [aws_default_subnet.subnet_1.id, aws_default_subnet.subnet_2.id]
+  count = var.producao ? 1 : 0
 }
 
 resource "aws_lb_target_group" "alvoLoadBalancer" {
@@ -60,6 +61,7 @@ resource "aws_lb_target_group" "alvoLoadBalancer" {
   port = "8000"
   protocol = "HTTP"
   vpc_id = aws_default_vpc.default.id
+  count = var.producao ? 1 : 0
 }
 
 resource "aws_default_vpc" "default" {
@@ -67,13 +69,15 @@ resource "aws_default_vpc" "default" {
 }
 
 resource "aws_lb_listener" "entradaLoadBalancer" {
-  load_balancer_arn = aws_lb.loadBalancer.arn
+  load_balancer_arn = aws_lb.loadBalancer[0].arn
   port = "8000"
   protocol = "HTTP"
   default_action {
     type = "forward"
-    target_group_arn = aws_lb_target_group.alvoLoadBalancer.arn
+    target_group_arn = aws_lb_target_group.alvoLoadBalancer[0].arn
   }
+
+  count = var.producao ? 1 : 0
 }
 
 resource "aws_autoscaling_policy" "escala-Producao" {
@@ -86,6 +90,8 @@ resource "aws_autoscaling_policy" "escala-Producao" {
     }
     target_value = 50.0
   }
+
+  count = var.producao ? 1 : 0
 }
 
 # resource "aws_instance" "instancia_com_template"{
